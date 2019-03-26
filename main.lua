@@ -151,11 +151,11 @@ sircbot:hook("OnChat", function(user, channel, message)
   end
   
   if (channel == schannel and command  == "!seen") then
-    local igyer = fcommand()
+    local igyer = sql:escape(fcommand())
     if (sircbot:whois(igyer)["userinfo"]) then
       sircbot:sendChat(channel, igyer.." épp itt van.")
     else
-      local lastseen_query = sql:execute("SELECT lastseen FROM igyerek WHERE igyer='"..sql:escape(igyer).."'")
+      local lastseen_query = sql:execute("SELECT lastseen FROM igyerek WHERE igyer='"..igyer.."'")
       local lastseen = lastseen_query:fetch()
       lastseen_query:close()
       if (lastseen) then
@@ -273,12 +273,12 @@ sircbot:hook("OnChat", function(user, channel, message)
   end 
   
   if (channel == schannel and command == "!last") then
-    local igyer = fcommand()
+    local igyer = sql:escape(fcommand())
     local last_query
     if (not igyer) then
       last_query = sql:execute("SELECT igyek.id,igyer FROM igyek LEFT JOIN igyerek ON igyek.igyer_id=igyerek.id WHERE igyek.id=(SELECT MAX(id) FROM igyek)")
     else
-      local igyer_id_query = sql:execute("SELECT id FROM igyerek WHERE igyer='"..sql:escape(igyer).."'")
+      local igyer_id_query = sql:execute("SELECT id FROM igyerek WHERE igyer='"..igyer.."'")
       local igyer_id = igyer_id_query:fetch()
       if (igyer_id) then
         last_query = sql:execute("SELECT igyek.id,igyer FROM igyek LEFT JOIN igyerek ON igyek.igyer_id=igyerek.id WHERE igyek.id=(SELECT MAX(id) FROM igyek WHERE igyer_id="..igyer_id..")")
@@ -314,7 +314,7 @@ sircbot:hook("OnChat", function(user, channel, message)
   end
   
   if (channel == schannel and command == "!stat") then
-    local igyer = fcommand()
+    local igyer = sql:escape(fcommand())
     if (not igyer) then
       local igyer_id_query = sql:execute("SELECT igyer_id FROM hosts WHERE host='"..user.host.."'") 
       local igyer_id = igyer_id_query:fetch()
@@ -337,7 +337,7 @@ sircbot:hook("OnChat", function(user, channel, message)
       end
       local igyer_id
       if (not host) then
-        local igyer_id_query = sql:execute("SELECT id FROM igyerek WHERE igyer='"..sql:escape(igyer).."'") 
+        local igyer_id_query = sql:execute("SELECT id FROM igyerek WHERE igyer='"..igyer.."'") 
         igyer_id = igyer_id_query:fetch()
         igyer_id_query:close()
       else
@@ -374,13 +374,13 @@ sircbot:hook("OnChat", function(user, channel, message)
       sircbot:sendChat(user.nick, "Maradjon látható??")
       return
     end
-    local bullet = message:sub(15)
+    local bullet = sql:escape(message:sub(15))
     if (bullet ~= nil) then
       local igyer_id_query = sql:execute("SELECT igyer_id FROM hosts WHERE host='"..user.host.."'")
       local igyer_id = igyer_id_query:fetch()
       igyer_id_query:close()
       if (igyer_id) then
-        sql:execute("INSERT INTO bulletin (igyer_id,bullet,regdate,private,sticky) VALUES ("..igyer_id..",'"..sql:escape(bullet).."',datetime('now','localtime'),"..private..","..sticky..")")
+        sql:execute("INSERT INTO bulletin (igyer_id,bullet,regdate,private,sticky) VALUES ("..igyer_id..",'"..bullet.."',datetime('now','localtime'),"..private..","..sticky..")")
         sircbot:sendChat(user.nick, "Hozzáadva")
         settopic()
       else
@@ -514,10 +514,6 @@ sircbot:hook("OnChat", function(user, channel, message)
     sql = sqlenv:connect('IGYdb.sqlite')
     sql:setautocommit(true,"IMMEDIATE")
     sircbot:sendChat(user.nick, "DB megfogva (SQL:"..tostring(sql)..",ENV:"..tostring(sqlenv)..")")
-  end
-  
-  if (channel == sircbot.nick and message:sub(0,3) == "esc" and user.host:find(admin)) then
-    sircbot:sendChat(user.nick, sql:escape(message:sub(5)))
   end
   
   if (channel == sircbot.nick and message:sub(0,3) == "sql" and user.host:find(admin)) then

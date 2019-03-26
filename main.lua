@@ -439,7 +439,13 @@ sircbot:hook("OnChat", function(user, channel, message)
   end
 
   if (channel == sircbot.nick and command == "listtopics") then
-    local bullets_query = sql:execute("SELECT bulletin.id,bullet,bulletin.regdate,igyer FROM bulletin LEFT JOIN igyerek ON igyer_id=igyerek.id ORDER BY bulletin.regdate DESC LIMIT 20")
+    local page = tonumber((fcommand()))
+    local bullets_query
+    if (not page) then
+      bullets_query = sql:execute("SELECT bulletin.id,bullet,bulletin.regdate,igyer FROM bulletin LEFT JOIN igyerek ON igyer_id=igyerek.id ORDER BY bulletin.regdate DESC LIMIT 5")
+    else
+      bullets_query = sql:execute("SELECT bulletin.id,bullet,bulletin.regdate,igyer FROM bulletin LEFT JOIN igyerek ON igyer_id=igyerek.id ORDER BY bulletin.regdate DESC LIMIT 5 OFFSET "..(page-1)*5)
+    end
     local bullets = bullets_query:fetch({},"a")
     while bullets do
       sircbot:sendChat(user.nick, "Topic ID:"..bullets.id.."|hozzáadta: "..bullets.igyer.." "..bullets.regdate..".kor")
@@ -486,7 +492,7 @@ sircbot:hook("OnChat", function(user, channel, message)
     sircbot:sendChat(user.nick, "!addtopic p s topic  - Topic frissítése ("..schannel.."). p - TinyURL használata (0/1); s - kiemelés (0/1)")
     sircbot:sendChat(user.nick, "                     - Példa: !addtopic 0 0 Új hír a topikba - Új, publikus hír, kiemelés nélkül")
     sircbot:sendChat(user.nick, "help                 - Ez")
-    sircbot:sendChat(user.nick, "listtopics           - Topik kiemelése vagy a kiemelés megszüntetése")
+    sircbot:sendChat(user.nick, "listtopics page      - Legutóbbi topikok listázása, 5 egy lapon")
     sircbot:sendChat(user.nick, "setsticky topicid    - Topik kiemelése vagy a kiemelés megszüntetése")
     sircbot:sendChat(user.nick, "reg nick pass        - Nick vagy host regisztrálása: reg nick jelszó")
     sircbot:sendChat(user.nick, "welcome msg          - Üzenet csatlakozáskor: welcome ez egy üzenet")

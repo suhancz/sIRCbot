@@ -391,6 +391,31 @@ sircbot:hook("OnChat", function(user, channel, message)
     end
   end
   
+  if (channel == schannel and command == "!help") then
+    local help = fcommand()
+    if (help == "igy" or help == "tak" or help == "így") then
+      sircbot:sendChat(schannel, help.." komment  -  Ígyszámláltó, komment nem kötelező")
+    elseif (help == "seen") then
+      sircbot:sendChat(schannel, "!"..help.." nick -  Mikor láttam utoljára? ("..schannel..")")
+    elseif (help == "howwuz") then
+      sircbot:sendChat(schannel, "!"..help.." nick igy -  Elígyelt így lekérdezése, nick mellőzhető  ("..schannel..")")
+    elseif (help == "top") then
+      sircbot:sendChat(schannel, "!"..help.."  -  A legígyebb lekérdezése ("..schannel..")")
+    elseif (help == "top3") then
+      sircbot:sendChat(schannel, "!"..help.."  -  A 3 legígyebb lekérdezése ("..schannel..")")
+    elseif (help == "last") then
+      sircbot:sendChat(schannel, "!"..help.." nick  -  Utolsó így vagy nick utolsó ígyének lekérdezése ("..schannel..")")
+    elseif (help == "stat") then
+      sircbot:sendChat(schannel, "!"..help.." nick  -  Saját vagy nick statisztikájának lekérése ("..schannel..")")
+    elseif (help == "rules") then
+      sircbot:sendChat(schannel, "!"..help.."  -  Szabályok ("..schannel..")")
+    elseif (help == "addtopic") then
+      sircbot:sendChat(schannel, "!"..help.." újtéma  -  Téma hozzáadása. ("..schannel..")")
+    else
+      sircbot:sendChat(schannel, "Ilyen parancs nincs ("..help..")")
+    end
+  end
+  
   if (channel == sircbot.nick and command == "reg") then
     local nick = sql:escape(fcommand())
     if (nick == nil) then 
@@ -477,8 +502,9 @@ sircbot:hook("OnChat", function(user, channel, message)
   end
         
   if (channel == sircbot.nick and command == "help") then
-    sircbot:sendChat(user.nick, "!igy                 - Ígyszámláló, csehül !tak ("..schannel..")")
-    sircbot:sendChat(user.nick, "!tak                 - Ígyszámláló, csehül !tak ("..schannel..")")
+    sircbot:sendChat(user.nick, "!igy komment         - Ígyszámláló, csehül !tak ("..schannel..")")
+    sircbot:sendChat(user.nick, "!tak komment         - Ígyszámláló, csehül !tak ("..schannel..")")
+    sircbot:sendChat(user.nick, "!így komment         - Ígyszámláló, í-vel is ("..schannel..")")
     sircbot:sendChat(user.nick, "!seen                - Mikor láttam utoljára? !seen nick ("..schannel..")")
     sircbot:sendChat(user.nick, "!howwuz igy          - Elígyelt így lekérdezése ("..schannel..")")
     sircbot:sendChat(user.nick, "!howwuz nick igy     - ígyer elígyelt ígyének lekérdezése ("..schannel..")")
@@ -489,8 +515,8 @@ sircbot:hook("OnChat", function(user, channel, message)
     sircbot:sendChat(user.nick, "!stat                - Saját statisztika lekérése("..schannel..")")
     sircbot:sendChat(user.nick, "!stat nick           - Más statisztikájának lekérése("..schannel..")")
     sircbot:sendChat(user.nick, "!rules               - Szabályok ("..schannel..")")
-    sircbot:sendChat(user.nick, "!addtopic p s topic  - Topic frissítése ("..schannel.."). p - TinyURL használata (0/1); s - kiemelés (0/1)")
-    sircbot:sendChat(user.nick, "                     - Példa: !addtopic 0 0 Új hír a topikba - Új, publikus hír, kiemelés nélkül")
+    sircbot:sendChat(user.nick, "!addtopic újtéma     - Topic frissítése ("..schannel..")")
+    sircbot:sendChat(user.nick, "!help parancs        - Segítség adott parancshoz ("..schannel..")")
     sircbot:sendChat(user.nick, "help                 - Ez")
     sircbot:sendChat(user.nick, "listtopics page      - Legutóbbi topikok listázása, 5 egy lapon")
     sircbot:sendChat(user.nick, "setsticky topicid    - Topik kiemelése vagy a kiemelés megszüntetése")

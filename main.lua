@@ -360,7 +360,7 @@ sircbot:hook("OnChat", function(user, channel, message)
   end
   
   if (channel == schannel and command == "!rules") then
-    rules()
+    rules(sircbot)
   end
   
   if (channel == schannel and command == "!addtopic") then

@@ -364,23 +364,13 @@ sircbot:hook("OnChat", function(user, channel, message)
   end
   
   if (channel == schannel and command == "!addtopic") then
-    local private = tonumber((fcommand())) -- nil input works this way
-    if (not private or private > 1 or private < 0) then
-      sircbot:sendChat(user.nick, "Privát vagy nem?")
-      return
-    end
-    local sticky = tonumber((fcommand())) -- nil input works this way
-    if (not sticky or private > 1 or private < 0) then
-      sircbot:sendChat(user.nick, "Maradjon látható??")
-      return
-    end
-    local bullet = sql:escape(message:sub(15))
+    local bullet = sql:escape(message:sub(11))
     if (bullet ~= nil) then
       local igyer_id_query = sql:execute("SELECT igyer_id FROM hosts WHERE host='"..user.host.."'")
       local igyer_id = igyer_id_query:fetch()
       igyer_id_query:close()
       if (igyer_id) then
-        sql:execute("INSERT INTO bulletin (igyer_id,bullet,regdate,private,sticky) VALUES ("..igyer_id..",'"..bullet.."',datetime('now','localtime'),"..private..","..sticky..")")
+        sql:execute("INSERT INTO bulletin (igyer_id,bullet,regdate,private,sticky) VALUES ("..igyer_id..",'"..bullet.."',datetime('now','localtime'),0,0)")
         sircbot:sendChat(user.nick, "Hozzáadva")
         settopic()
       else
